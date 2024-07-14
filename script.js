@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const amountFilteredTransactions = nameFilteredTransactions.filter(t => {
             const parsedAmount = parseFloat(amount);
-            return isNaN(parsedAmount) || t.amount >= parsedAmount;
+            return isNaN(parsedAmount) || t.amount === parsedAmount;
         });
 
         renderTable(amountFilteredTransactions);
