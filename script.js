@@ -19,26 +19,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             filterName.addEventListener('input', () => {
                 const name = filterName.value.toLowerCase();
-                const filteredTransactions = transactions.filter(t => {
-                    const customer = customers.find(c => c.id === t.customer_id);
-                    return customer && customer.name.toLowerCase().includes(name);
-                });
-                renderTable(filteredTransactions);
-                renderChart(filteredTransactions, name);
+                filterAndRender(name, filterAmount.value);
             });
 
             filterAmount.addEventListener('input', () => {
-                const amount = parseFloat(filterAmount.value);
-                if (!isNaN(amount)) {
-                    const filteredTransactions = transactions.filter(t => t.amount >= amount);
-                    renderTable(filteredTransactions);
-                    renderChart(filteredTransactions, filterName.value.toLowerCase());
-                } else {
-                    renderTable(transactions);
-                    renderChart(transactions, filterName.value.toLowerCase());
-                }
+                filterAndRender(filterName.value.toLowerCase(), filterAmount.value);
             });
         });
+
+    function filterAndRender(name, amount) {
+        const nameFilteredTransactions = transactions.filter(t => {
+            const customer = customers.find(c => c.id === t.customer_id);
+            return customer && customer.name.toLowerCase().includes(name);
+        });
+
+        const amountFilteredTransactions = nameFilteredTransactions.filter(t => {
+            const parsedAmount = parseFloat(amount);
+            return isNaN(parsedAmount) || t.amount >= parsedAmount;
+        });
+
+        renderTable(amountFilteredTransactions);
+        renderChart(amountFilteredTransactions, name);
+    }
 
     function renderTable(transactions) {
         tableBody.innerHTML = '';
