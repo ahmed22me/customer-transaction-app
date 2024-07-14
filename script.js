@@ -5,9 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = document.querySelector('#transactions-graph').getContext('2d');
     let transactions = [];
     let customers = [];
+    let chart;
 
-    // Fetch data from the local server
-    fetch('/data')
+    // Fetch data from the static JSON file
+    fetch('data.json')
         .then(response => response.json())
         .then(data => {
             customers = data.customers;
@@ -31,8 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(amount)) {
                     const filteredTransactions = transactions.filter(t => t.amount >= amount);
                     renderTable(filteredTransactions);
+                    renderChart(filteredTransactions, filterName.value.toLowerCase());
                 } else {
                     renderTable(transactions);
+                    renderChart(transactions, filterName.value.toLowerCase());
                 }
             });
         });
@@ -52,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderChart(transactions, customerName) {
+        if (chart) {
+            chart.destroy();
+        }
+
         const filteredTransactions = customerName
             ? transactions.filter(t => {
                 const customer = customers.find(c => c.id === t.customer_id);
@@ -67,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const labels = Object.keys(dailyTotals);
         const data = Object.values(dailyTotals);
 
-        new Chart(ctx, {
+        chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels,
