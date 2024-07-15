@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let chart;
 
     // Fetch data from the static JSON file
-    fetch('data.json')
+    fetch('http://localhost:1010/data')
         .then(response => response.json())
         .then(data => {
             customers = data.customers;
